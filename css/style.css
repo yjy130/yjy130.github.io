@@ -96,7 +96,7 @@ p {
 
 /* showcase */
 #showcase {
-	background: url(../img/pic.png) no-repeat center center/cover;
+	background: url(../img/bg.jpg) no-repeat center center/cover;
 	height: 600px;
 }
 
@@ -144,7 +144,8 @@ p {
 #home-info .info-img {
 	float: left;
 	width: 50%;
-	background: url(../img/02index-homeinfo-bg.jpg) no-repeat center center/cover;
+	background: url(../img/photo.jpg) no-repeat center center/cover;
+	opacity:0.4;
 	height: 100%;
 }
 
@@ -207,6 +208,7 @@ p {
 #testimonials {
 	height: 600px;
 	background: url(../img/04about-testimonals-bg.jpg) no-repeat center center/cover;
+	opacity:0.4;
 	padding-top: 100px;
 }
 
@@ -264,4 +266,19 @@ p {
 	background: #333333;
 	color: #FFFFFF;
 	padding: 20px;
+}
+
+#llise {
+	list-style: disc;
+}
+
+#two {
+	color: #FFFFFF;
+	background: url(../img/mv.jpg) no-repeat center center/cover;
+	opacity:0.4;
+}
+
+#one {
+	background: url(../img/mw.jpg) no-repeat center center/cover;
+	opacity:0.4;
 }
