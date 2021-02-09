@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">	
+    <title>随机点名系统--倒计时版本</title>
+    <style>
+	/*样式代码，非专业人士请勿更改*/		
+       	
+        .wrapper{
+            text-align: center;
+        }
+		
+		.wrapper ul{
+            padding: 0;
+        }
+		
+        .wrapper ul li{
+            width: 20%;
+            height: 23px;
+            text-align: center;
+            margin: 4px;
+            border:2px solid #ccc;
+			border-color:green;
+            border-radius: 5px;           
+            display: inline-block;
+        }
+		
+        .wrapper button{
+			outline-color: #fff;
+            margin-top: 20px;
+            width: 25%;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+		
+        .wrapper .active{
+            background-color: #5af3cf;
+            font-weight: 700;
+			font-family:"华文仿宋";
+        }
+		
+        .lucking{           
+			margin-top: 30px;
+        }	
+		
+		.lucking p{
+			font-size:30px;
+            font-weight: 700;
+			font-family:"华文仿宋";
+        }		
+		
+		#headline{
+			text-align:center;
+			font-weight: bold;
+			color: #ff00a5;
+			font-family:"华文仿宋";
+		}		
+		
+		#showText{
+			position:fixed;
+			width:100%;
+			text-align:center;
+			right:0;
+			bottom:75px;
+			border: none;
+			font-size:14px;
+		}
+		
+		#tailOne{
+			position:fixed;
+			text-align:center;
+			bottom:52px;
+			width:100%;
+		}
+		
+		#tailTwo{
+			position:fixed;
+			text-align:center;
+			bottom:30px;
+			width:100%;
+		}
+		
+		#tailThree{
+			position:fixed;
+			bottom:5px;
+			width:100%;
+		}
+    </style>
+</head>
+<body>
+	<li><a href="index.html">首页</a></li>
+	<div class="headline" id="headline">
+       <span>随机点名系统</span>
+    </div>	
+	
+    <div class="wrapper" id="panel">
+        <ul id="list"></ul>		
+        <button class="start" id="startBtn" style="background-color:#0000ff78;">开始点名</button>
+        <button class="stop" id="stopBtn" style="background-color:#ff000091;" disabled>停止</button>
+        <div class="lucking" id="show">
+            <p></p>
+        </div>
+    </div>	
+	<input value="【开始后,可手动点击停止,不然程序将在x秒后自动停止】" id="showText">	
+	
+	<div class="tail" id="tailOne">
+       <span>开发者：会编程的绵羊</span>
+    </div>	
+	<div class="tail" id="tailTwo"> 
+	   <span>喜欢记得点关注喔</span>
+    </div>	
+	<div class="tail" id="tailThree"> 
+	   <marquee style="color:red;" scrollamount=10;>
+	   温馨提示：代码原创</marquee>
+    </div>	
+	
+</body>
+</html>
+<script>
+	/*核心代码，非专业人士请勿更改*/
+	//需要抽取的名字如下写法，用英文单引号('')把名字括起来，然后加上英文逗号(,)隔开，最后一个名字后面不需要加上英文逗号(,)。不限定写多少个名字，不够可以按要求继续加上去，也可以删除(要将英文单引号('')加上名字和每个名字后面的逗号一起删)
+    var array = ['0 1','0 2','0 3','0 4','0 5','0 6','0 7','0 8','0 9','1 0','1 1','1 2','1 3','1 4','1 5','1 6','1 7','1 8','1 9','2 0','2 1','2 2','2 3','2 4','2 5','2 6','2 7','2 8','2 9','3 0','3 1','3 2','3 3','3 4','3 5','3 6','3 7','3 8','3 9','4 0','4 1','4 2','4 3','4 4','4 5','4 6','4 7','4 8','4 9','5 0','5 1','5 2','5 3','5 4','5 5','5 6','5 7','5 8','5 9','6 0','6 1','6 2','6 3','6 4','6 5','6 6'];
+    // 获取元素
+    var wrapper  = document.getElementById('panel');
+    var ul = document.getElementById('list');;
+    var timer = null;
+	
+	//调用（执行）事件
+    init();
+	
+
+	//读取事件
+    function init(){
+		// 动态创建li
+		for(var i = 0; i < array.length;i++){
+			var oli = document.createElement('li');
+			oli.innerHTML = array[i];//依次从数组中遍历一个
+			ul.appendChild(oli);//拼接进li列表
+		}
+		//调用（执行）点击事件
+        clickEvent();
+    }
+	
+	var test=0;
+	
+	// 获取抽取的结果框
+    var lucking = document.getElementById('show');
+	
+	// 点击事件/函数
+    function clickEvent(){		
+		// 获取开始点名按钮（start）
+		var start = wrapper.getElementsByTagName('button')[0];
+		// 获取停止按钮（stop）
+		var stop = wrapper.getElementsByTagName('button')[1];		
+		
+        // 定时器（可以设定抽取变化的效率，即速度）
+		//开始点名按钮触发事件
+        start.addEventListener('click',function(){
+			test=1;
+			countDown();
+			lucking.children[0].innerText ="";//清空lucking下的p标签内容			
+            clearInterval(timer);//清空计时器,避免二次点击无法停止
+            timer = setInterval(function(){                
+				//从所有的名字中（数组里）随机抽取一个索引（从0开始），例如有35个人，那索引就是0到35-1，即0~34。
+                var random = Math.floor(Math.random()*array.length);// 获得随机数
+				//通过for循环遍历，一共遍历（最大索引）次
+                for(var i = 0;i < array.length;i++){
+                    ul.children[i].className = '';
+                }
+                ul.children[random].className = 'active';//返回抽取到的名字，然后通过停止按钮事件显示出来
+            },50);//这个50就是设定时间的，这是50等于0.05秒，5000是5秒,1000就是1秒，如此类推
+        });		
+				
+		//停止按钮触发事件
+        stop.addEventListener('click',function(){
+			test=2;				
+			clearInterval(timer);//清空计时器，停止
+			// 找到此时的元素
+			var active = document.getElementsByClassName('active')[0];
+			alert("幸运儿：学号为" + active.innerText + "的同学");
+			lucking.children[0].innerText = "幸运儿：学号为" + active.innerText + "的同学";//往lucking下的p标签添加内容，即显示名字
+			show();					            
+        })
+    }
+		
+	
+	//倒计时功能
+	var time=Math.floor(Math.random()*(10-5+1)+5);
+	var obj = document.getElementById("showText");
+	var startBtn = document.getElementById("startBtn");
+	var stopBtn = document.getElementById("stopBtn");
+	function countDown() {
+		if(test==1){
+			if (time > 0) {
+				obj.value = "【程序将在 "+time+" 秒后自动停止】";
+				time--;
+				setTimeout("countDown()", 1000);//倒计时1秒执行一次
+				setTimeout("showStopBtn()", 700);//设置0.7秒显示，防止两个按钮点击过快					
+			} else {
+				clearInterval(timer);//清空计时器，停止
+				// 找到此时的元素
+				var active = document.getElementsByClassName('active')[0];				
+				obj.style.display="none";//隐藏倒计时文字		
+				alert("幸运儿：学号为" + active.innerText + "的同学");	
+				lucking.children[0].innerText = "幸运儿：学号为" + active.innerText + "的同学";//往lucking下的p标签添加内容，即显示名字		
+				show();//调用控制事件
+			}
+		}
+		return;
+	}
+	
+	//控制事件
+	function show() {			
+		obj.style.display="block";//显示倒计时文字
+		time=Math.floor(Math.random()*(10-5+1)+5);//重新赋值
+		obj.value = "【开始后,可手动点击停止,不然程序将在"+time+"秒后自动停止】";	
+		setTimeout("showStartBtn()", 700);//设置0.7秒显示，防止两个按钮点击过快			
+	}
+	
+	//控制事件
+	function showStartBtn() {
+		startBtn.disabled = false;//开始按钮可点击	
+		stopBtn.disabled = true;//停止按钮不可点击		
+	}
+	
+	//控制事件
+	function showStopBtn() {
+		startBtn.disabled = true;//开始按钮不可点击
+		stopBtn.disabled = false;//停止按钮可点击
+	}
+	
+</script>
